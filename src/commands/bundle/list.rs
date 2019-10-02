@@ -1,4 +1,4 @@
-use crate::bundle::store;
+use crate::bundle::store::BundleStore;
 use clap::App;
 
 pub fn cli() -> App<'static, 'static> {
@@ -6,8 +6,13 @@ pub fn cli() -> App<'static, 'static> {
 }
 
 pub fn exec() {
-  let bundles = store::list_bundles();
-  for bundle in &bundles {
-    println!("{}", bundle.name)
+  match BundleStore::new(String::from("")) {
+    Ok(store) => {
+      let bundles = store.list_bundles();
+      for bundle in &bundles {
+        println!("{}", bundle.name)
+      }
+    }
+    Err(s) => println!("{}", s),
   }
 }
