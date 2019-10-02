@@ -1,6 +1,29 @@
 use dirs;
 use std::path::PathBuf;
 use walkdir::WalkDir;
+
+pub struct Reference {
+    pub name: String,
+}
+
+impl Reference {
+    pub fn named(n: String) -> Reference {
+        Reference {
+            name: Reference::parse_named(n),
+        }
+    }
+
+    fn parse_named(s: String) -> String {
+        let parts: Vec<&str> = s.split('/').collect();
+        format!(
+            "{}/{}:{}",
+            parts[1],
+            parts[2],
+            parts[4].trim_end_matches(".json")
+        )
+    }
+}
+
 #[derive(Debug)]
 pub struct Bundle {
     pub name: String,
@@ -20,19 +43,26 @@ impl BundleStore {
         }
     }
 
-    pub fn list_bundles(&self) -> Vec<Bundle> {
-        let mut ret = Vec::new();
-        for entry in WalkDir::new(self.path.join("bundles"))
+    pub fn list_bundles(&self) -> Vec<Reference> {
+        self.get_bundle_files()
+            .into_iter()
+            .map(Reference::named)
+            .collect()
+    }
+
+    fn get_bundle_files(&self) -> Vec<String> {
+        WalkDir::new(self.path.join("bundles"))
             .into_iter()
             .filter_map(Result::ok)
             .filter(|e| !e.file_type().is_dir())
-        {
-            if let Ok(p) = entry.path().strip_prefix(self.path.join("bundles")) {
-                ret.push(Bundle {
-                    name: p.to_str().unwrap().to_string(),
-                })
-            };
-        }
-        ret
+            .map(
+                |p| match p.into_path().strip_prefix(self.path.join("bundles")) {
+                    Ok(f) => Ok(f.to_path_buf()),
+                    Err(r) => Err(r),
+                },
+            )
+            .filter_map(Result::ok)
+            .map(|e| e.to_str().unwrap().to_string())
+            .collect()
     }
 }
