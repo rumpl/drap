@@ -11,5 +11,5 @@ pub fn list_bundles() -> Vec<Bundle> {
     ret.push(Bundle {
         name: String::from("Another"),
     });
-    return ret;
+    ret
 }
