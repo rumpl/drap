@@ -1,4 +1,5 @@
 use clap::App;
+use drap::commands;
 
 fn main() {
     let matches = App::new("drap")
@@ -7,7 +8,7 @@ fn main() {
         .subcommands(drap::commands::builtin())
         .get_matches();
 
-    match drap::commands::builtin_exec(&matches) {
+    match commands::builtin_exec(&matches) {
         Some(f) => f(),
         None => println!("unknown command"),
     };
