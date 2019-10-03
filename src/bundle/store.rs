@@ -15,6 +15,10 @@ impl Reference {
 
     fn parse_named(s: String) -> String {
         let parts: Vec<&str> = s.split('/').collect();
+        // Dirty dirty
+        if parts.len() != 5 {
+            return String::from("");
+        }
         format!(
             "{}/{}:{}",
             parts[1],
