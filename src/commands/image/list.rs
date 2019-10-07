@@ -4,8 +4,8 @@ use prettytable::Table;
 use crate::bundle::store::BundleStore;
 use clap::App;
 
-pub fn cli() -> App<'static, 'static> {
-  App::new("list")
+pub fn cli(s: &str) -> App<'static, 'static> {
+  App::new(s)
 }
 
 pub fn exec() {
