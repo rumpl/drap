@@ -8,6 +8,12 @@ pub struct Reference {
     pub name: String,
 }
 
+#[derive(Debug)]
+pub struct StoreBundle {
+    pub reference: Reference,
+    pub bundle: Bundle,
+}
+
 impl Reference {
     pub fn named(n: &Path) -> Reference {
         Reference {
@@ -23,12 +29,6 @@ impl Reference {
         }
         parts[1].to_string()
     }
-}
-
-#[derive(Debug)]
-pub struct StoreBundle {
-    pub reference: Reference,
-    pub bundle: Bundle,
 }
 
 pub struct BundleStore {
