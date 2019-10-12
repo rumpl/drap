@@ -5,7 +5,7 @@ use crate::bundle::store::BundleStore;
 use clap::App;
 
 pub fn cli(s: &str) -> App<'static, 'static> {
-  App::new(s)
+  App::new(s).about("List application images")
 }
 
 pub fn exec() {
