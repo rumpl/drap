@@ -2,8 +2,8 @@ use clap::{App, ArgMatches};
 
 pub fn builtin() -> App<'static, 'static> {
   App::new("image")
-    .help_message("Application image management")
-    .subcommands(vec![list::cli("list"), list::cli("ls")])
+    .about("Application image management")
+    .subcommands(vec![list::cli()])
 }
 
 pub fn exec(cmd: &ArgMatches<'_>) -> Option<fn()> {

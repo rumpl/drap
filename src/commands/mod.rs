@@ -5,7 +5,7 @@ pub mod build;
 pub mod image;
 
 pub fn builtin() -> Vec<App<'static, 'static>> {
-  vec![image::builtin(), build::builtin()]
+  vec![image::builtin(), build::cli()]
 }
 
 pub fn builtin_exec(cmd: &ArgMatches<'_>) -> Option<fn()> {

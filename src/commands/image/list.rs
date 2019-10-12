@@ -4,8 +4,10 @@ use prettytable::Table;
 use crate::bundle::store::BundleStore;
 use clap::App;
 
-pub fn cli(s: &str) -> App<'static, 'static> {
-  App::new(s).about("List application images")
+pub fn cli() -> App<'static, 'static> {
+  App::new("list")
+    .alias("ls")
+    .about("List application images")
 }
 
 pub fn exec() {
