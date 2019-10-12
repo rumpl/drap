@@ -25,7 +25,7 @@ pub fn exec() {
       let bundles = store.list_bundles();
       table.add_row(row!["APP IMAGE", "APP NAME"]);
       for bundle in &bundles {
-        table.add_row(row![bundle.name, "TODO"]);
+        table.add_row(row![bundle.reference.name, bundle.bundle.name]);
       }
 
       table.printstd();

@@ -1,19 +1,21 @@
+use crate::cnab::Bundle;
 use dirs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
+#[derive(Debug)]
 pub struct Reference {
     pub name: String,
 }
 
 impl Reference {
-    pub fn named(n: String) -> Reference {
+    pub fn named(n: &Path) -> Reference {
         Reference {
-            name: Reference::parse_named(n),
+            name: Reference::parse_named(n.to_str().unwrap()),
         }
     }
 
-    fn parse_named(s: String) -> String {
+    fn parse_named(s: &str) -> String {
         let parts: Vec<&str> = s.split('/').collect();
         // Dirty dirty
         if parts.len() == 6 {
@@ -24,8 +26,9 @@ impl Reference {
 }
 
 #[derive(Debug)]
-pub struct Bundle {
-    pub name: String,
+pub struct StoreBundle {
+    pub reference: Reference,
+    pub bundle: Bundle,
 }
 
 pub struct BundleStore {
@@ -42,26 +45,21 @@ impl BundleStore {
         }
     }
 
-    pub fn list_bundles(&self) -> Vec<Reference> {
+    pub fn list_bundles(&self) -> Vec<StoreBundle> {
         self.get_bundle_files()
-            .into_iter()
-            .map(Reference::named)
-            .collect()
     }
 
-    fn get_bundle_files(&self) -> Vec<String> {
+    fn get_bundle_files(&self) -> Vec<StoreBundle> {
         WalkDir::new(self.path.join("bundles"))
             .into_iter()
             .filter_map(Result::ok)
             .filter(|e| !e.file_type().is_dir())
-            .map(
-                |p| match p.into_path().strip_prefix(self.path.join("bundles")) {
-                    Ok(f) => Ok(f.to_path_buf()),
-                    Err(r) => Err(r),
-                },
-            )
-            .filter_map(Result::ok)
-            .map(|e| e.to_str().unwrap().to_string())
+            .map(|e| StoreBundle {
+                reference: Reference::named(
+                    e.path().strip_prefix(self.path.join("bundles")).unwrap(),
+                ),
+                bundle: Bundle::from_file(e.path()).unwrap(),
+            })
             .collect()
     }
 }
