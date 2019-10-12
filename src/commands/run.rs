@@ -27,6 +27,8 @@ fn container_create(
 }
 
 fn run(args: &ArgMatches<'_>) {
+  // todo: extract the action invocation logic because we will want to reuse
+  // it for other actions.
   let file = args.value_of("INPUT").unwrap();
   let bundle = Bundle::from_file(Path::new(file)).unwrap();
   // Needs to be on tcp because shiplift can't attach over the socket.
