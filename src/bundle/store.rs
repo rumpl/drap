@@ -16,15 +16,10 @@ impl Reference {
     fn parse_named(s: String) -> String {
         let parts: Vec<&str> = s.split('/').collect();
         // Dirty dirty
-        if parts.len() != 5 {
-            return String::from("");
+        if parts.len() == 6 {
+            return format!("{}:{}", parts[2], parts[4].trim_end_matches(".json"));
         }
-        format!(
-            "{}/{}:{}",
-            parts[1],
-            parts[2],
-            parts[4].trim_end_matches(".json")
-        )
+        parts[1].to_string()
     }
 }
 
