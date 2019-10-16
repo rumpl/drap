@@ -2,8 +2,10 @@ use crate::cnab::Bundle;
 use clap::{App, Arg, ArgMatches};
 use http::Uri;
 use shiplift::rep::ContainerCreateInfo;
-use shiplift::{ContainerOptions, Docker, Error};
+use shiplift::Docker;
+use shiplift::{tty::StreamType, ContainerOptions, Error};
 use std::path::Path;
+use std::{thread, time};
 use tokio::prelude::{Future, Stream};
 use tokio::runtime::current_thread::Runtime;
 
@@ -53,15 +55,20 @@ fn run(args: &ArgMatches<'_>) {
   let mut rt = Runtime::new().unwrap();
   let cont = docker.containers().get(&info.id);
 
-  let fut = cont.attach().and_then(|multiplexed| {
-    multiplexed.for_each(|c| {
-      println!("{}", c.as_string_lossy());
-      Ok(())
+  let ff = cont.attach().and_then(|multiplexed| {
+    cont.start().and_then(|_| {
+      multiplexed.for_each(|chunk| {
+        match chunk.stream_type {
+          StreamType::StdOut => print!("{}", chunk.as_string_lossy()),
+          StreamType::StdErr => eprintln!("{}", chunk.as_string_lossy()),
+          StreamType::StdIn => unreachable!(),
+        }
+        Ok(())
+      })
     })
   });
+  rt.block_on(ff).unwrap();
+  let ten_millis = time::Duration::from_millis(2000);
 
-  let f = cont.start();
-  rt.block_on(f).unwrap();
-
-  rt.block_on(fut).unwrap();
+  thread::sleep(ten_millis);
 }
