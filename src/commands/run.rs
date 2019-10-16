@@ -5,7 +5,6 @@ use shiplift::rep::ContainerCreateInfo;
 use shiplift::Docker;
 use shiplift::{tty::StreamType, ContainerOptions, Error};
 use std::path::Path;
-use std::{thread, time};
 use tokio::prelude::{Future, Stream};
 use tokio::runtime::current_thread::Runtime;
 
@@ -68,7 +67,4 @@ fn run(args: &ArgMatches<'_>) {
     })
   });
   rt.block_on(ff).unwrap();
-  let ten_millis = time::Duration::from_millis(2000);
-
-  thread::sleep(ten_millis);
 }
