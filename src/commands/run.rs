@@ -46,14 +46,12 @@ fn run(args: &ArgMatches<'_>) {
     .attach_stdout(true)
     .build();
 
-  let mut runtime = tokio::runtime::Runtime::new().expect("Unable to create a runtime");
+  let mut runtime = Runtime::new().expect("Unable to create a runtime");
   let info = runtime
     .block_on(container_create(&docker, &container_options))
     .unwrap();
 
-  let mut rt = Runtime::new().unwrap();
   let cont = docker.containers().get(&info.id);
-
   let ff = cont.attach().and_then(|multiplexed| {
     cont.start().and_then(|_| {
       multiplexed.for_each(|chunk| {
@@ -66,5 +64,5 @@ fn run(args: &ArgMatches<'_>) {
       })
     })
   });
-  rt.block_on(ff).unwrap();
+  runtime.block_on(ff).unwrap();
 }
