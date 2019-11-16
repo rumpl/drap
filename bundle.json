@@ -1,0 +1,32 @@
+{
+  "name": "helloworld",
+  "version": "0.1.1",
+  "description": "A short description of your bundle",
+  "invocationImages": [
+    {
+      "image": "rumpl/cnab-base",
+      "imageType": "docker"
+    }
+  ],
+  "keywords": [
+    "helloworld",
+    "cnab",
+    "tutorial"
+  ],
+  "maintainers": [
+    {
+      "email": "john.doe@example.com",
+      "name": "John Doe",
+      "url": "https://example.com"
+    },
+    {
+      "email": "jane.doe@example.com",
+      "name": "Jane Doe",
+      "url": "https://example.com"
+    }
+  ],
+  "images": null,
+  "parameters": null,
+  "credentials": null,
+  "schemaVersion": "v1.0.0-WD"
+}
